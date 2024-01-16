@@ -53,7 +53,7 @@ scene('game', () => {
   const player = add([
     // list of components
     sprite('girafa'),
-    pos(80, 40),
+    pos(20, 40),
     area(),
     body()
   ]);
