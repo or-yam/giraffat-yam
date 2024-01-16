@@ -119,6 +119,10 @@ scene('game', () => {
   onUpdate(() => {
     score++;
     scoreLabel.text = score.toString();
+    if (score === 1000) {
+      go('win');
+      addKaboom(center());
+    }
   });
 });
 
@@ -129,6 +133,13 @@ scene('lose', (score) => {
   add([text(score), pos(width() / 2, height() / 2 + 64), scale(2), anchor('center')]);
 
   // go back to game with space is pressed
+  onKeyPress('space', () => go('game'));
+  onClick(() => go('game'));
+});
+
+scene('win', () => {
+  add([sprite('bath'), pos(width() / 2, height() / 2 - 64), scale(2), anchor('center')]);
+  add([text('You Win'), pos(width() / 2, height() / 2 + 64), scale(2), anchor('center')]);
   onKeyPress('space', () => go('game'));
   onClick(() => go('game'));
 });
