@@ -42,7 +42,8 @@ const {
 setBackground(141, 183, 255);
 
 // load assets
-loadSprite('bean', '/sprites/sea-gerafe_md.png');
+loadSprite('girafa', '/sprites/sea-gerafe_md.png');
+loadSprite('bath', '/sprites/bath.png');
 
 scene('game', () => {
   // define gravity
@@ -51,7 +52,7 @@ scene('game', () => {
   // add a game object to screen
   const player = add([
     // list of components
-    sprite('bean'),
+    sprite('girafa'),
     pos(80, 40),
     area(),
     body()
@@ -121,7 +122,7 @@ scene('game', () => {
 });
 
 scene('lose', (score) => {
-  add([sprite('bean'), pos(width() / 2, height() / 2 - 64), scale(2), anchor('center')]);
+  add([sprite('girafa'), pos(width() / 2, height() / 2 - 64), scale(2), anchor('center')]);
 
   // display score
   add([text(score), pos(width() / 2, height() / 2 + 64), scale(2), anchor('center')]);
