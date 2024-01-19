@@ -1,11 +1,6 @@
 import kaboom from 'kaboom';
 
 const k = kaboom();
-
-const FLOOR_HEIGHT = 48;
-const JUMP_FORCE = 800;
-const SPEED = 480;
-
 const {
   setBackground,
   loadSprite,
@@ -38,6 +33,11 @@ const {
   center
 } = k;
 
+const FLOOR_HEIGHT = 48;
+const JUMP_FORCE = 800;
+const SPEED = 480;
+const MAX_SCORE = 1000;
+
 // initialize context
 setBackground(141, 183, 255);
 
@@ -46,17 +46,10 @@ loadSprite('girafa', '/sprites/sea-gerafe_md.png');
 loadSprite('bath', '/sprites/bath.png');
 
 scene('game', () => {
-  // define gravity
   setGravity(2400);
+  let score = 0;
 
-  // add a game object to screen
-  const player = add([
-    // list of components
-    sprite('girafa'),
-    pos(20, 40),
-    area(),
-    body()
-  ]);
+  const player = add([sprite('girafa'), pos(20, 40), area(), body()]);
 
   // floor
   add([
@@ -76,12 +69,24 @@ scene('game', () => {
     }
   }
 
-  // jump when user press space
   onKeyPress('space', jump);
   onClick(jump);
 
+  function spawnBath() {
+    wait(1.5, () =>
+      add([
+        sprite('bath'),
+        area(),
+        pos(width(), height() - FLOOR_HEIGHT),
+        anchor('botleft'),
+        move(LEFT, SPEED),
+        offscreen({ destroy: true }),
+        'bath'
+      ])
+    );
+  }
+
   function spawnTree() {
-    // add tree obj
     wait(1.5, () =>
       add([
         rect(48, rand(32, 96), { radius: 10 }),
@@ -96,10 +101,9 @@ scene('game', () => {
       ])
     );
     // wait a random amount of time to spawn next tree
-    wait(rand(0.8, 2), spawnTree);
+    wait(rand(0.8, 2), () => (score >= MAX_SCORE ? spawnBath() : spawnTree()));
   }
 
-  // start spawning trees
   spawnTree();
 
   // lose if player collides with any game obj with tag "tree"
@@ -110,29 +114,25 @@ scene('game', () => {
     addKaboom(center());
   });
 
-  // keep track of score
-  let score = 0;
+  player.onCollide('bath', () => {
+    // go to "win" scene and pass the score
+    go('win', score);
+    burp({ speed: 3 });
+    addKaboom(center());
+  });
 
   const scoreLabel = add([text(score.toString()), pos(24, 24)]);
 
-  // increment score every frame
   onUpdate(() => {
     score++;
     scoreLabel.text = score.toString();
-    if (score === 1000) {
-      go('win');
-      addKaboom(center());
-    }
   });
 });
 
 scene('lose', (score) => {
   add([sprite('girafa'), pos(width() / 2, height() / 2 - 64), scale(2), anchor('center')]);
-
-  // display score
   add([text(score), pos(width() / 2, height() / 2 + 64), scale(2), anchor('center')]);
 
-  // go back to game with space is pressed
   onKeyPress('space', () => go('game'));
   onClick(() => go('game'));
 });
@@ -140,6 +140,7 @@ scene('lose', (score) => {
 scene('win', () => {
   add([sprite('bath'), pos(width() / 2, height() / 2 - 64), scale(2), anchor('center')]);
   add([text('You Win'), pos(width() / 2, height() / 2 + 64), scale(2), anchor('center')]);
+
   onKeyPress('space', () => go('game'));
   onClick(() => go('game'));
 });
