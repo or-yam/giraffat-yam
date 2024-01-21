@@ -28,13 +28,11 @@ const {
   text,
   burp,
   LEFT,
-  onUpdate,
-  addKaboom,
-  center
+  onUpdate
 } = k;
 
 const FLOOR_HEIGHT = 48;
-const JUMP_FORCE = 800;
+const JUMP_FORCE = 900;
 const SPEED = 480;
 const MAX_SCORE = 1000;
 
@@ -42,8 +40,11 @@ const MAX_SCORE = 1000;
 setBackground(141, 183, 255);
 
 // load assets
-loadSprite('girafa', '/sprites/sea-gerafe_md.png');
+// loadSprite('girafa', '/sprites/sea-gerafe_md.png');
+loadSprite('girafa', '/sprites/new-gerafe.png');
+loadSprite('girafa_lg', '/sprites/new-gerafe_lg.png');
 loadSprite('bath', '/sprites/bath.png');
+loadSprite('bath_lg', '/sprites/bath_og.png');
 
 scene('game', () => {
   setGravity(2400);
@@ -84,6 +85,7 @@ scene('game', () => {
         'bath'
       ])
     );
+    wait(rand(0.8, 2), spawnBath);
   }
 
   function spawnTree() {
@@ -110,18 +112,16 @@ scene('game', () => {
   player.onCollide('tree', () => {
     // go to "lose" scene and pass the score
     go('lose', score);
-    burp({ speed: 3 });
-    addKaboom(center());
+    burp({ speed: 0.8 });
   });
 
   player.onCollide('bath', () => {
     // go to "win" scene and pass the score
     go('win', score);
     burp({ speed: 3 });
-    addKaboom(center());
   });
 
-  const scoreLabel = add([text(score.toString()), pos(24, 24)]);
+  const scoreLabel = add([text(score.toString()), pos(24, 24), color(0, 0, 0)]);
 
   onUpdate(() => {
     score++;
@@ -130,16 +130,17 @@ scene('game', () => {
 });
 
 scene('lose', (score) => {
-  add([sprite('girafa'), pos(width() / 2, height() / 2 - 64), scale(2), anchor('center')]);
-  add([text(score), pos(width() / 2, height() / 2 + 64), scale(2), anchor('center')]);
+  add([sprite('girafa_lg'), pos(width() / 2, height() / 2), scale(1), anchor('center')]);
+  add([text(score), pos(width() / 2, height() / 2), scale(2), anchor('center'), color(0, 0, 0)]);
 
   onKeyPress('space', () => go('game'));
   onClick(() => go('game'));
 });
 
 scene('win', () => {
-  add([sprite('bath'), pos(width() / 2, height() / 2 - 64), scale(2), anchor('center')]);
-  add([text('You Win'), pos(width() / 2, height() / 2 + 64), scale(2), anchor('center')]);
+  add([sprite('girafa_lg'), pos(width() / 2, height() / 2), scale(1), anchor('center')]);
+  add([sprite('bath_lg'), pos(width() / 2, height() / 2 + 120), scale(1), anchor('center')]);
+  add([text('You Win'), pos(width() / 2, height() / 2 - 300), scale(2), anchor('center'), color(0, 0, 0)]);
 
   onKeyPress('space', () => go('game'));
   onClick(() => go('game'));
