@@ -1,5 +1,5 @@
 import { KaboomCtx } from 'kaboom';
-import { FLOOR_HEIGHT, OBSTICLES, SPEED } from './consts';
+import { FLOOR_HEIGHT, OBSTACLES, SPEED } from './consts';
 import { SPRITES } from './sprites';
 
 export const addFloor = (k: KaboomCtx) => {
@@ -25,7 +25,7 @@ export const spawnBath = (k: KaboomCtx) => {
       k.anchor('botleft'),
       k.move(k.LEFT, SPEED),
       k.offscreen({ destroy: true }),
-      OBSTICLES.bath
+      OBSTACLES.bath
     ])
   );
   k.wait(k.rand(0.8, 2), () => spawnBath(k));

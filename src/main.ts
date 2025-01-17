@@ -1,7 +1,7 @@
 import kaboom, { GameObj } from 'kaboom';
 import { loadSprites } from './sprites';
 import { SCENES, addLoseScene, addWinScene } from './scenes';
-import { FLOOR_HEIGHT, GRAVITY, JUMP_FORCE, MAX_SCORE, OBSTICLES, SPEED } from './consts';
+import { FLOOR_HEIGHT, GRAVITY, JUMP_FORCE, MAX_SCORE, OBSTACLES, SPEED } from './consts';
 import { addFloor, addPlayer, spawnBath } from './landscape';
 
 const jump = (player: GameObj) => {
@@ -72,17 +72,17 @@ scene(SCENES.game, () => {
 
   spawnTree();
 
-  player.onCollide(OBSTICLES.tree, () => {
+  player.onCollide(OBSTACLES.tree, () => {
     go(SCENES.lose, score);
     burp({ speed: 0.8 });
   });
 
-  player.onCollide(OBSTICLES.bath, () => {
+  player.onCollide(OBSTACLES.bath, () => {
     go(SCENES.win, score);
     burp({ speed: 3 });
   });
 
-  const scoreLabel = add([text(score.toString()), pos(24, 24), color(0, 0, 0)]);
+  const scoreLabel = add([text(score.toString()), pos(width() / 2, 24), color(0, 0, 0)]);
 
   onUpdate(() => {
     score++;
