@@ -1,8 +1,8 @@
-import { KaboomCtx } from 'kaboom';
+import { KAPLAYCtx } from 'kaplay';
 import { FLOOR_HEIGHT, OBSTACLES, SPEED } from './consts';
 import { SPRITES } from './sprites';
 
-export const addFloor = (k: KaboomCtx) => {
+export const addFloor = (k: KAPLAYCtx) => {
   k.add([
     k.rect(k.width(), FLOOR_HEIGHT),
     k.outline(4),
@@ -14,9 +14,9 @@ export const addFloor = (k: KaboomCtx) => {
   ]);
 };
 
-export const addPlayer = (k: KaboomCtx) => k.add([k.sprite(SPRITES.girafa), k.pos(20, 40), k.area(), k.body()]);
+export const addPlayer = (k: KAPLAYCtx) => k.add([k.sprite(SPRITES.girafa), k.pos(20, 40), k.area(), k.body()]);
 
-export const spawnBath = (k: KaboomCtx) => {
+export const spawnBath = (k: KAPLAYCtx) => {
   k.wait(1.5, () =>
     k.add([
       k.sprite(SPRITES.bath),

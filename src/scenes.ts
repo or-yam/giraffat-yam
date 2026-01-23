@@ -1,4 +1,4 @@
-import { KaboomCtx } from 'kaboom';
+import { KAPLAYCtx } from 'kaplay';
 import { SPRITES } from './sprites';
 
 export const SCENES = {
@@ -7,7 +7,7 @@ export const SCENES = {
   game: 'game'
 } as const;
 
-export const addLoseScene = (k: KaboomCtx) => {
+export const addLoseScene = (k: KAPLAYCtx) => {
   const { scene, add, sprite, pos, width, height, scale, anchor, text, color, onKeyPress, go, onClick } = k;
   scene(SCENES.lose, (score) => {
     add([sprite(SPRITES.girafa_lg), pos(width() / 2, height() / 2), scale(1), anchor('center')]);
@@ -18,7 +18,7 @@ export const addLoseScene = (k: KaboomCtx) => {
   });
 };
 
-export const addWinScene = (k: KaboomCtx) => {
+export const addWinScene = (k: KAPLAYCtx) => {
   const { scene, add, sprite, pos, width, height, scale, anchor, text, color, onKeyPress, go, onClick } = k;
 
   scene(SCENES.win, () => {
