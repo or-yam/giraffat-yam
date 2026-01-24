@@ -1,4 +1,4 @@
-import kaboom, { GameObj } from 'kaboom';
+import kaboom, { GameObj } from 'kaplay';
 import { loadSprites } from './sprites';
 import { SCENES, addLoseScene, addWinScene } from './scenes';
 import { FLOOR_HEIGHT, GRAVITY, JUMP_FORCE, MAX_SCORE, OBSTACLES, SPEED } from './consts';

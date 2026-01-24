@@ -1,4 +1,4 @@
-import { KaboomCtx } from 'kaboom';
+import { KAPLAYCtx } from 'kaplay';
 
 export const SPRITES = {
   girafa: 'girafa',
@@ -7,7 +7,7 @@ export const SPRITES = {
   bath_lg: 'bath_lg'
 } as const;
 
-export const loadSprites = (k: KaboomCtx) => {
+export const loadSprites = (k: KAPLAYCtx) => {
   k.loadSprite('girafa', '/sprites/new-gerafe.png');
   k.loadSprite('girafa_lg', '/sprites/new-gerafe_lg.png');
   k.loadSprite('bath', '/sprites/bath.png');
