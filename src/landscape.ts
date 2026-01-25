@@ -14,7 +14,17 @@ export const addFloor = (k: KAPLAYCtx) => {
   ]);
 };
 
-export const addPlayer = (k: KAPLAYCtx) => k.add([k.sprite(SPRITES.girafa), k.pos(20, 40), k.area(), k.body()]);
+export const addPlayer = (k: KAPLAYCtx) => {
+  const player = k.add([
+    k.sprite(SPRITES.girafa, { flipX: true }),
+    k.pos(80, 40),
+    k.scale(0.6),
+    k.area({ scale: k.vec2(0.5, 1) }),
+    k.body(),
+  ]);
+  player.play('run');
+  return player;
+};
 
 export const spawnBath = (k: KAPLAYCtx) => {
   k.wait(1.5, () =>
