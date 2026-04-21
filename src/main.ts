@@ -1,7 +1,7 @@
 import kaboom, { GameObj } from 'kaplay';
-import { loadSprites } from './sprites';
+import { loadSprites, SPRITES } from './sprites';
 import { SCENES, addLoseScene, addWinScene } from './scenes';
-import { FLOOR_HEIGHT, GRAVITY, JUMP_FORCE, MAX_SCORE, OBSTACLES, SPEED } from './consts';
+import { FLOOR_HEIGHT, GRAVITY, JUMP_FORCE, MAX_SCORE, OBSTACLES, SPEED, BG_SCROLL_RATIO } from './consts';
 import { addFloor, addPlayer, spawnBath } from './landscape';
 
 const jump = (player: GameObj) => {
@@ -13,7 +13,6 @@ const jump = (player: GameObj) => {
 
 const k = kaboom();
 const {
-  setBackground,
   scene,
   setGravity,
   add,
@@ -21,7 +20,6 @@ const {
   area,
   rect,
   width,
-  outline,
   height,
   anchor,
   color,
@@ -34,15 +32,62 @@ const {
   offscreen,
   text,
   burp,
+  sprite,
+  scale,
+  dt,
   LEFT,
-  onUpdate
+  onUpdate,
+  get
 } = k;
 
-setBackground(141, 183, 255);
 loadSprites(k);
 
 scene(SCENES.game, () => {
   let score = 0;
+
+  const bgScale = height() / 768;
+  const bgWidth = 1376 * bgScale;
+
+  const bg1 = add([
+    sprite(SPRITES.bg),
+    pos(0, 0),
+    anchor('topleft'),
+    scale(bgScale),
+    'background'
+  ]);
+
+  const bg2 = add([
+    sprite(SPRITES.bg),
+    pos(bgWidth, 0),
+    anchor('topleft'),
+    scale(bgScale),
+    'background'
+  ]);
+
+  const currentSpeed = () => SPEED * (1 + score / 2000);
+
+  onUpdate(() => {
+    const dtVal = dt();
+    const speedVal = currentSpeed();
+    bg1.pos.x -= speedVal * BG_SCROLL_RATIO * dtVal;
+    bg2.pos.x -= speedVal * BG_SCROLL_RATIO * dtVal;
+
+    if (bg1.pos.x <= -bgWidth) {
+      bg1.pos.x = bg2.pos.x + bgWidth;
+    }
+    if (bg2.pos.x <= -bgWidth) {
+      bg2.pos.x = bg1.pos.x + bgWidth;
+    }
+
+    get('coral').forEach((c) => {
+      const coral = c as GameObj & { passed: boolean };
+      if (!coral.passed && coral.pos.x < player.pos.x - 30) {
+        coral.passed = true;
+        score += 20;
+        scoreLabel.text = score.toString();
+      }
+    });
+  });
 
   setGravity(GRAVITY);
   addFloor(k);
@@ -52,27 +97,61 @@ scene(SCENES.game, () => {
   onKeyPress('space', () => jump(player));
   onClick(() => jump(player));
 
-  function spawnTree() {
-    wait(1.5, () =>
+  function spawnCoral() {
+    wait(1.5, () => {
+      const baseWidth = 32;
+      const baseHeight = rand(40, 80);
+      const startX = width();
+      const startY = height() - FLOOR_HEIGHT;
+
       add([
-        rect(48, rand(32, 96), { radius: 10 }),
+        rect(baseWidth, baseHeight),
         area(),
-        outline(4),
-        pos(width(), height() - FLOOR_HEIGHT),
+        pos(startX, startY),
         anchor('botleft'),
-        color(150, 75, 0),
-        move(LEFT, SPEED),
+        color(255, 127, 80),
+        move(LEFT, currentSpeed()),
         offscreen({ destroy: true }),
-        'tree'
-      ])
-    );
-    // wait a random amount of time to spawn next tree
-    wait(rand(0.8, 2), () => (score >= MAX_SCORE ? spawnBath(k) : spawnTree()));
+        'coral',
+        { passed: false }
+      ]) satisfies GameObj & { passed: boolean };
+
+      add([
+        rect(16, 8),
+        area(),
+        pos(startX - 4, startY - baseHeight * 0.3),
+        anchor('botleft'),
+        color(255, 127, 80),
+        move(LEFT, currentSpeed()),
+        offscreen({ destroy: true })
+      ]);
+
+      add([
+        rect(12, 6),
+        area(),
+        pos(startX + baseWidth - 8, startY - baseHeight * 0.5),
+        anchor('botleft'),
+        color(255, 99, 71),
+        move(LEFT, currentSpeed()),
+        offscreen({ destroy: true })
+      ]);
+
+      add([
+        rect(20, 8),
+        area(),
+        pos(startX - 8, startY - baseHeight * 0.7),
+        anchor('botleft'),
+        color(255, 99, 71),
+        move(LEFT, currentSpeed()),
+        offscreen({ destroy: true })
+      ]);
+    });
+    wait(rand(0.8, 2), () => (score >= MAX_SCORE ? spawnBath(k, currentSpeed) : spawnCoral()));
   }
 
-  spawnTree();
+  spawnCoral();
 
-  player.onCollide(OBSTACLES.tree, () => {
+  player.onCollide(OBSTACLES.coral, () => {
     go(SCENES.lose, score);
     burp({ speed: 0.8 });
   });
@@ -82,12 +161,34 @@ scene(SCENES.game, () => {
     burp({ speed: 3 });
   });
 
-  const scoreLabel = add([text(score.toString()), pos(width() / 2, 24), color(0, 0, 0)]);
+  add([
+    rect(84, 44),
+    pos(width() / 2 - 42, 6),
+    anchor('topleft'),
+    color(0, 0, 0),
+  ]);
 
-  onUpdate(() => {
+  add([
+    rect(80, 40),
+    pos(width() / 2 - 40, 8),
+    anchor('topleft'),
+    color(255, 255, 255),
+  ]);
+
+  const scoreLabel = add([
+    text(score.toString()),
+    pos(width() / 2, 30),
+    anchor('center'),
+    color(0, 0, 0),
+  ]);
+
+  const updateScore = () => {
     score++;
     scoreLabel.text = score.toString();
-  });
+    wait(0.1, updateScore);
+  };
+
+  wait(0.1, updateScore);
 });
 
 addLoseScene(k);
