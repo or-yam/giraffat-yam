@@ -4,7 +4,8 @@ export const SPRITES = {
   girafa: 'girafa',
   girafa_lg: 'girafa_lg',
   bath: 'bath',
-  bath_lg: 'bath_lg'
+  bath_lg: 'bath_lg',
+  bg: 'bg'
 } as const;
 
 export const loadSprites = (k: KAPLAYCtx) => {
@@ -24,4 +25,5 @@ export const loadSprites = (k: KAPLAYCtx) => {
   });
   k.loadSprite('bath', '/sprites/bath.png');
   k.loadSprite('bath_lg', '/sprites/bath_og.png');
+  k.loadSprite('bg', '/sprites/background.png');
 };
